@@ -16,37 +16,37 @@ class TocMachine(GraphMachine):
         )
 
     def is_going_to_hello(self, event):
-        if event.get("message"):
+        if event.get("message") and event['message'].get("text"):
             text = event['message']['text']
             return text.lower() == 'hi'
         return False
 
     def is_going_to_wrong(self, event):
-        if event.get("message"):
+        if event.get("message") and event['message'].get("text"):
             text = event['message']['text']
             return text.lower() not in year and text.lower() != "hi" and text.lower() != "list"
         return False
 
     def is_going_to_search(self, event):
-        if event.get("message"):
+        if event.get("message") and event['message'].get("text"):
             text = event['message']['text']
             return text.lower() in year
         return False
 
     def is_going_to_list(self, event):
-        if event.get("message"):
+        if event.get("message") and event['message'].get("text"):
             text = event['message']['text']
             return text.lower() == "list"
         return False
 
     def is_going_to_comment(self, event):
-        if event.get("message"):
+        if event.get("message") and event['message'].get("text"):
             text = event['message']['text']
             return int(text) > 0 and int(text) <= len(search.name)
         return False
 
     def is_going_to_addYN(self, event):
-        if event.get("message"):
+        if event.get("message") and event['message'].get("text"):
             text = event['message']['text']
             return text.lower() == "y" or text.lower() == "n"
         return False
