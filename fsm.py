@@ -3,6 +3,8 @@ from utils import send_text_message
 import search
 
 year = ["2016", "2017", "2018"]
+mylist = []
+addname = []
 
 class TocMachine(GraphMachine):
     def __init__(self, **machine_configs):
@@ -11,7 +13,7 @@ class TocMachine(GraphMachine):
             **machine_configs
         )
 
-    def is_going_to_state0(self, event):
+    def is_going_to_hello(self, event):
         if event.get("message"):
             text = event['message']['text']
             return text.lower() == 'hi'
@@ -20,30 +22,39 @@ class TocMachine(GraphMachine):
     def is_going_to_wrong(self, event):
         if event.get("message"):
             text = event['message']['text']
-            return text.lower() not in year and text.lower() != "hi"
+            return text.lower() not in year and text.lower() != "hi" and text.lower() != "list"
         return False
 
-    def is_going_to_state1(self, event):
+    def is_going_to_search(self, event):
         if event.get("message"):
             text = event['message']['text']
             return text.lower() in year
         return False
 
-    def is_going_to_state2(self, event):
+    def is_going_to_list(self, event):
+        if event.get("message"):
+            text = event['message']['text']
+            return text.lower() == "list"
+        return False
+
+    def is_going_to_comment(self, event):
         if event.get("message"):
             text = event['message']['text']
             return int(text) > 0 and int(text) <= len(search.name)
         return False
 
-    def on_enter_state0(self, event):
-        print("I'm entering state0")
+    def is_going_to_addYN(self, event):
+        if event.get("message"):
+            text = event['message']['text']
+            return text.lower() == "y" or text.lower() == "n"
+        return False
+
+    def on_enter_hello(self, event):
+        print("I'm entering hello")
 
         sender_id = event['sender']['id']
         send_text_message(sender_id, "hi, choose 2016-2018 for korea drama ;)")
         self.go_back()
-
-    def on_exit_state0(self):
-        print('Leaving state0')
 
     def on_enter_wrong(self, event):
         print("I'm entering wrong")
@@ -52,12 +63,8 @@ class TocMachine(GraphMachine):
         send_text_message(sender_id, "Searching error... please choose 2016-2018 again ><")
         self.go_back()
 
-    def on_exit_wrong(self):
-        print('Leaving wrong')
-
-
-    def on_enter_state1(self, event):
-        print("I'm entering state1")
+    def on_enter_search(self, event):
+        print("I'm entering search")
 
         sender_id = event['sender']['id']
         text = event['message']['text']
@@ -70,12 +77,40 @@ class TocMachine(GraphMachine):
         send_text_message(sender_id, "%s" % temp)
         send_text_message(sender_id, "You can choose 1-%d to see comment of drama ;)" % len(search.name))
 
-    def on_enter_state2(self, event):
-        print("I'm entering state2")
+    def on_enter_list(self, event):
+        print("I'm entering list")
+
+        sender_id = event['sender']['id']
+        if len(mylist) == 0:
+            send_text_message(sender_id, "List is empty, add some ! <3")
+            send_text_message(sender_id, "Choose 2016-2018 to find ;)")
+        else:
+            temp = "Your list <3 \n"
+            for i in range(len(mylist)):
+                temp += str(i+1) + '. ' +mylist[i] + '\n'
+            send_text_message(sender_id, "%s" % temp)
+            send_text_message(sender_id, "Choose 2016-2018 to add more ! ;)")
+
+        self.go_back()
+
+    def on_enter_comment(self, event):
+        print("I'm entering comment")
 
         sender_id = event['sender']['id']
         text = event['message']['text']
         send_text_message(sender_id, "You choose %s, wait a minute please <3" % search.name[int(text)-1])
         send_text_message(sender_id, "%s" % search.comment[int(text)-1])
-        self.go_back()
+        send_text_message(sender_id, "Do you want to add %s to your list ? (Y or N) ;)" % search.name[int(text)-1])
+        addname.clear()
+        addname.append(search.name[int(text)-1])
+
+    def on_enter_addYN(self, event):
+        sender_id = event['sender']['id']
+        text = event['message']['text']
+        if text.lower() == "y":
+            mylist.append(addname[len(addname)-1])
+            send_text_message(sender_id, "Add completely <3")
+            send_text_message(sender_id, "Continue choosing drama or check your list by typing LIST ;)")
+        else:
+            send_text_message(sender_id, "Continue choosing drama to find the drama you like ;)")
 

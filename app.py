@@ -4,19 +4,13 @@ from fsm import TocMachine
 VERIFY_TOKEN = "123"
 
 machine = TocMachine(
-    states=[
-        'user',
-        'state0',
-        'state1',
-        'state2',
-        'wrong'
-    ],
-    transitions=[
+    states = ['user', 'hello', 'search', 'comment', 'addYN', 'wrong', 'list'],
+    transitions = [
         {
             'trigger': 'advance',
             'source': 'user',
-            'dest': 'state0',
-            'conditions': 'is_going_to_state0'
+            'dest': 'hello',
+            'conditions': 'is_going_to_hello'
         },
         {
             'trigger': 'advance',
@@ -27,27 +21,57 @@ machine = TocMachine(
         {
             'trigger': 'advance',
             'source': 'user',
-            'dest': 'state1',
-            'conditions': 'is_going_to_state1'
+            'dest': 'search',
+            'conditions': 'is_going_to_search'
         },
         {
             'trigger': 'advance',
-            'source': 'state1',
-            'dest': 'state1',
-            'conditions': 'is_going_to_state1'
+            'source': 'search',
+            'dest': 'search',
+            'conditions': 'is_going_to_search'
         },
         {
             'trigger': 'advance',
-            'source': 'state1',
-            'dest': 'state2',
-            'conditions': 'is_going_to_state2'
+            'source': 'search',
+            'dest': 'comment',
+            'conditions': 'is_going_to_comment'
+        },
+        {
+            'trigger': 'advance',
+            'source': 'comment',
+            'dest': 'addYN',
+            'conditions': 'is_going_to_addYN'
+        },
+        {
+            'trigger': 'advance',
+            'source': 'addYN',
+            'dest': 'list',
+            'conditions': 'is_going_to_list'
+        },
+        {
+            'trigger': 'advance',
+            'source': 'addYN',
+            'dest': 'search',
+            'conditions': 'is_going_to_search'
+        },
+        {
+            'trigger': 'advance',
+            'source': 'addYN',
+            'dest': 'comment',
+            'conditions': 'is_going_to_comment'
+        },
+        {
+            'trigger': 'advance',
+            'source': 'user',
+            'dest': 'list',
+            'conditions': 'is_going_to_list'
         },
         {
             'trigger': 'go_back',
             'source': [
-                'state0',
+                'hello',
                 'wrong',
-                'state2'
+                'list'
             ],
             'dest': 'user'
         }
