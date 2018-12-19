@@ -1,9 +1,8 @@
 import requests
-
+import os
 
 GRAPH_URL = "https://graph.facebook.com/v2.6"
-ACCESS_TOKEN = "EAAKZBtEyrY6kBABdhPxerkOftrSpWFnBqQm6IqZCTXS9Yi72LBs953zv1oo2XhJYn0dSwZANZAAve4KvRh7zcBSFIlZBuGL3pmmZCyvbZAVQGZBHknv4HcxCfJlhUtIjnBsHjpWPeyZBpz61cd1ywKFGyVK20cXDb6T2KZB39ZCOySXwwZDZD"
-
+ACCESS_TOKEN = os.environ[ACCESS_TOKEN]
 
 def send_text_message(id, text):
     url = "{0}/me/messages?access_token={1}".format(GRAPH_URL, ACCESS_TOKEN)
@@ -18,9 +17,23 @@ def send_text_message(id, text):
     return response
 
 
-"""
 def send_image_url(id, img_url):
-    pass
+    url = "{0}/me/messages?access_token={1}".format(GRAPH_URL, ACCESS_TOKEN)
+    payload = {
+        "recipient": {"id": id},
+        "message": {
+            "attachment": {
+                "type": "image",
+                "payload": {
+                    "url": img_url,
+                    "is_reusable": True
+                }
+            }
+        }
+    }
+    response = requests.post(url, json=payload)
+
+"""
 def send_button_message(id, text, buttons):
     pass
 """
